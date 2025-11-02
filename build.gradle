@@ -1,0 +1,54 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+//plugins {
+//    alias(libs.plugins.androidApplication) apply false
+//    alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+//    alias(libs.plugins.androidLibrary) apply false
+//}
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+//plugins {
+//    id 'com.android.application' version '8.1.0' apply false
+//    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
+//}
+
+
+buildscript {
+    ext {
+        kotlinVersion = '1.8.10'
+    }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jcenter.bintray.com' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.1' //7.1.1简称AGP(Android Gradle plugin)
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://jcenter.bintray.com' }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/releases'
+        }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url 'https://maven.aliyun.com/repository/google' }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}
