@@ -21,50 +21,9 @@ class HomeViewModel : ViewModel() {
     private val _listState = MutableStateFlow<ListState<ItemEntity>>(ListState())
     val listState: StateFlow<ListState<ItemEntity>> = _listState.asStateFlow()
 
-    private val pageSize = 20
-
     init {
-        loadInitialData()
+        getHomeDataList(false)
     }
-
-    // 初始加载
-    private fun loadInitialData() {
-        viewModelScope.launch {
-            _listState.update {
-                it.copy(
-                    isLoading = true,
-                    error = null,
-                    curPage = 0
-                )
-            }
-
-            try {
-                val o1 = async(Dispatchers.IO) {
-                    Repository.getHomeBannerList()
-                }
-                val o2 = async(Dispatchers.IO) {
-                    Repository.getHomeDataList("${_listState.value.curPage}")
-                }
-                val banners = o1.await()
-                val articles = o2.await()?.datas.orEmpty()
-                _listState.update {
-                    it.copy(
-                        datas = banners + articles,
-                        isLoading = false,
-                        curPage = 0,
-                    )
-                }
-            } catch (e: Exception) {
-                _listState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "加载失败: ${e.message}"
-                    )
-                }
-            }
-        }
-    }
-
 
     // 下拉刷新加载更多
     internal fun getHomeDataList(isRefreshing: Boolean) {
@@ -98,12 +57,13 @@ class HomeViewModel : ViewModel() {
                         datas = if (isRefreshing) banners + articles else it.datas.orEmpty() + articles,
                         isLoading = false,
                         isRefreshing = isRefreshing,
-                        curPage = currentPage
+                        hasMore = it.curPage != o2.await()?.pageCount
                     )
                 }
             } catch (e: Exception) {
                 _listState.update {
                     it.copy(
+                        isLoading = false,
                         isRefreshing = false,
                         error = "刷新失败: ${e.message}",
                         curPage = if (isRefreshing) 0 else it.curPage - 1
