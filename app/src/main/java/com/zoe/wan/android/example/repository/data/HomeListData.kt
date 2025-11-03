@@ -46,5 +46,5 @@ data class HomeListItemData(
     val userId: Int,
     val visible: Int,
     val zan: Int,
-    override val itemType: Int = ITEM_LIST
+    override var itemType: Int
 ) : ItemEntity()

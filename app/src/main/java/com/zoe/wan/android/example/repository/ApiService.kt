@@ -16,13 +16,13 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("$Home_Banner")
+    @GET(Home_Banner)
     suspend fun homeBannerList() : HttpResult<List<HomeBannerDataItem>>
 
     @GET("$Article_List{pageCount}/json")
     suspend fun homeDataList(@Path("pageCount") pageCount: String) : HttpResult<HomeListData>
 
-    @GET("$Knowledge_List")
+    @GET(Knowledge_List)
     suspend fun knowledgeList() : HttpResult<KnowledgeListData>?
 
     @GET("$Knowledge_List_detail{pageCount}/json")

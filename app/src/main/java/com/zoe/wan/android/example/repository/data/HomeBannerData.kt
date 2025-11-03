@@ -3,9 +3,9 @@ package com.zoe.wan.android.example.repository.data
 import com.chad.library.adapter.base.entity.MultiItemEntity
 
 data class HomeBannerData(
-    var datas: List<HomeBannerDataItem>?,
+    var data: List<HomeBannerDataItem>?,
     override val itemType: Int = ITEM_BANNER
-) : ItemEntity()
+): ItemEntity()
 
 abstract class ItemEntity: MultiItemEntity {
 

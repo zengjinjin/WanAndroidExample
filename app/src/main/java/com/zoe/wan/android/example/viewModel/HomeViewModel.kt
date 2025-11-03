@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoe.wan.android.example.repository.Repository
 import com.zoe.wan.android.example.repository.data.HomeBannerData
-import com.zoe.wan.android.example.repository.data.HomeBannerDataItem
 import com.zoe.wan.android.example.repository.data.ItemEntity
 import com.zoe.wan.android.example.repository.data.ListState
 import kotlinx.coroutines.CoroutineStart
@@ -47,14 +46,10 @@ class HomeViewModel : ViewModel() {
                     Repository.getHomeDataList("${_listState.value.curPage}")
                 }
                 val banners = o1.await()
-                val articles = o2.await().datas as MutableList<ItemEntity>
-                val newList = mutableListOf<ItemEntity>()
-                newList.add(HomeBannerData(banners))
-                newList.addAll(articles)
-                println("zjj newList:"+newList.size)
+                val articles = o2.await()?.datas.orEmpty()
                 _listState.update {
                     it.copy(
-                        datas = newList,
+                        datas = banners + articles,
                         isLoading = false,
                         curPage = 0,
                     )
@@ -76,7 +71,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             if (_listState.value.isRefreshing && _listState.value.isLoading) return@launch
 
-            val currentPage = if (isRefreshing) 1 else _listState.value.curPage + 1
+            val currentPage = if (isRefreshing) 0 else _listState.value.curPage + 1
             _listState.update {
                 it.copy(
                     isLoading = true,
@@ -87,32 +82,22 @@ class HomeViewModel : ViewModel() {
             }
 
             try {
-                var o1: Deferred<List<HomeBannerDataItem>>? = null
+                var o1: Deferred<List<HomeBannerData>>? = null
                 if (isRefreshing) {
                     o1 = async(Dispatchers.IO, CoroutineStart.LAZY) {
-                        Repository.getHomeBannerList().orEmpty()
+                        Repository.getHomeBannerList()
                     }
                 }
                 val o2 = async(Dispatchers.IO) {
                     Repository.getHomeDataList("${_listState.value.curPage}")
                 }
-                val banners = o1?.await()
-                val articles = o2.await().datas
-                var newList = mutableListOf<ItemEntity>()
-                if (isRefreshing) {
-                    newList.add(HomeBannerData(banners))
-                    newList.addAll(articles)
-                } else {
-                    val currentList = _listState.value?.datas
-                    if (currentList != null) {
-                        newList = articles?.let { currentList.plus(it) } as MutableList<ItemEntity>
-                    }
-                }
+                val banners = o1?.await().orEmpty()
+                val articles = o2.await()?.datas.orEmpty()
                 _listState.update {
                     it.copy(
-                        datas = newList,
-                        isRefreshing = isRefreshing,
+                        datas = if (isRefreshing) banners + articles else it.datas.orEmpty() + articles,
                         isLoading = false,
+                        isRefreshing = isRefreshing,
                         curPage = currentPage
                     )
                 }
@@ -121,7 +106,7 @@ class HomeViewModel : ViewModel() {
                     it.copy(
                         isRefreshing = false,
                         error = "刷新失败: ${e.message}",
-                        curPage = if (isRefreshing) 1 else it.curPage + 1
+                        curPage = if (isRefreshing) 0 else it.curPage - 1
                     )
                 }
             }

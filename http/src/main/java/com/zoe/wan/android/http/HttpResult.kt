@@ -6,7 +6,7 @@ package com.zoe.wan.android.http
 data class HttpResult<out T>(
      val errorCode: String,
      val errorMsg: String,
-     val data: T,
+     val data: T?
 ) {
      companion object {
           const val SUCCESS = "0"

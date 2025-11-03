@@ -1,7 +1,6 @@
 package com.zoe.wan.android.example.adapter
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
-import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
@@ -9,7 +8,6 @@ import com.youth.banner.listener.OnPageChangeListener
 import com.zoe.wan.android.example.R
 import com.zoe.wan.android.example.repository.data.HomeBannerData
 import com.zoe.wan.android.example.repository.data.HomeBannerDataItem
-import com.zoe.wan.android.example.repository.data.HomeListData
 import com.zoe.wan.android.example.repository.data.HomeListItemData
 import com.zoe.wan.android.example.repository.data.ItemEntity
 
@@ -25,28 +23,23 @@ class NewsAdapter : BaseMultiItemQuickAdapter<ItemEntity, BaseViewHolder>() {
         if (holder.itemViewType == ItemEntity.ITEM_BANNER) {
             val item: HomeBannerData? = multiItemEntity as? HomeBannerData
             val banner = holder.getView<Banner<HomeBannerDataItem, ImageAdapter>>(R.id.banner)
-            holder.setText(R.id.banner_title, item?.datas?.get(0)?.title)
-            banner.setAdapter(ImageAdapter(item?.datas))
+            holder.setText(R.id.banner_title, item?.data?.firstOrNull()?.title)
+            banner.setAdapter(ImageAdapter(item?.data))
                 .setIndicator(CircleIndicator(banner.context))
                 .addOnPageChangeListener(object : OnPageChangeListener {
                     override fun onPageScrolled(
                         position: Int,
                         positionOffset: Float,
                         positionOffsetPixels: Int
-                    ) {
-
-                    }
+                    ) {}
 
                     override fun onPageSelected(position: Int) {
-                        holder.setText(R.id.banner_title, item?.datas?.get(position)?.title)
+                        holder.setText(R.id.banner_title, item?.data?.get(position)?.title)
                     }
 
-                    override fun onPageScrollStateChanged(state: Int) {
-
-                    }
+                    override fun onPageScrollStateChanged(state: Int) {}
 
                 })
-
         } else {
             val item: HomeListItemData? = multiItemEntity as? HomeListItemData
             holder.setText(R.id.news_title, item?.title)

@@ -3,10 +3,7 @@ package com.zoe.wan.android.example.fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.zoe.wan.android.example.Address
-import com.zoe.wan.android.example.Person
 import com.zoe.wan.android.example.viewModel.HomeViewModel
 import com.zoe.wan.android.example.adapter.NewsAdapter
 import com.zoe.wan.android.example.databinding.FragmentHomeBinding
@@ -16,27 +13,35 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
-    private lateinit var adapter: NewsAdapter
+    private lateinit var myAdapter: NewsAdapter
 
     override fun initViewData() {
-        val viewModel = structViewModel(HomeViewModel::class.java)
-        adapter = NewsAdapter()
-        binding.rv.layoutManager = LinearLayoutManager(context)
-        binding.rv.adapter = adapter
-        viewModel.viewModelScope.launch(Dispatchers.Main) {
+        val viewModel = structViewModel(HomeViewModel::class.java).apply{
+            binding.swipeRefreshLayout.postDelayed({ binding.swipeRefreshLayout.autoRefresh() },200)
+        }
+        binding.rv.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = NewsAdapter().also { myAdapter = it }
+        }
+        binding.swipeRefreshLayout.apply {
+            setOnRefreshListener {
+                viewModel.getHomeDataList(true)
+            }
+            setOnLoadMoreListener {
+                viewModel.getHomeDataList(false)
+            }
+        }
+        lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.listState.collect { list ->
                     list?.let {
-                        adapter.setList(list.datas)
+                        myAdapter.setList(list.datas)
+                        if (list.isRefreshing)
+                            binding.swipeRefreshLayout.finishRefresh()
+                        else binding.swipeRefreshLayout.finishLoadMore()
                     }
                 }
             }
-        }
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.getHomeDataList (true)
-        }
-        binding.swipeRefreshLayout.setOnLoadMoreListener {
-            viewModel.getHomeDataList (false)
         }
     }
 }
