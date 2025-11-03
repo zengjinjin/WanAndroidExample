@@ -25,11 +25,6 @@ object Repository {
 
     suspend fun getKnowledgeDataList(): KnowledgeListData? {
         val data : HttpResult<KnowledgeListData>? = apiService.knowledgeList()
-        //这是在搞笑吗？？？
-//        if (data?.data != null){
-//            return data.data
-//        }
-//        return null
         return data?.data
     }
 

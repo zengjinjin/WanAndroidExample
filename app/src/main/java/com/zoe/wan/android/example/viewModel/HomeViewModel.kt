@@ -22,7 +22,7 @@ class HomeViewModel : ViewModel() {
     val listState: StateFlow<ListState<ItemEntity>> = _listState.asStateFlow()
 
     init {
-        getHomeDataList(false)
+        getHomeDataList(true)
     }
 
     // 下拉刷新加载更多
