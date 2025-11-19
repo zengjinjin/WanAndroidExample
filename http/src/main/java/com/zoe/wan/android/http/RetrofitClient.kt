@@ -6,7 +6,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
@@ -23,7 +22,7 @@ class RetrofitClient {
     companion object {
         private var weakContext: WeakReference<Context>? = null
         private var retrofitClient: RetrofitClient? = null
-        private const val DEFAULT_TIME_OUT = 15
+        private const val DEFAULT_TIME_OUT = 60
         fun getInstance(): RetrofitClient {
             if (retrofitClient == null) {
                 synchronized(RetrofitClient::class.java) {
@@ -74,6 +73,7 @@ class RetrofitClient {
             .sslSocketFactory(TrustAllCerts.createSSLSocketFactory()!!, TrustAllCerts())
             .hostnameVerifier(TrustAllCerts.TrustAllHostnameVerifier())
             .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(JavaUrlInterceptor())
             .build()
     }
 
@@ -92,7 +92,7 @@ class RetrofitClient {
      */
     private fun <T> create(interfaceServer: Class<T>?): T {
         val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BaseUrlConstants.getHost())
+            .baseUrl(BaseUrlConstants.baseUrl)
             .addConverterFactory(ConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(createOkHttpClient())

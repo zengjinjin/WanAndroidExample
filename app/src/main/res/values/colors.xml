@@ -11,4 +11,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black_60">#99000000</color>
     <color name="black_90">#66000000</color>
+
+
+    <color name="color_1C7BEF">#1C7BEF</color>
+    <color name="color_3B4046">#3B4046</color>
+    <color name="color_EAECEF">#eaecef</color>
+    <color name="color_21252F">#21252F</color>
 </resources>

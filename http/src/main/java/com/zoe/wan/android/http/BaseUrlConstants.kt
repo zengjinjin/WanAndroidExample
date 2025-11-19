@@ -1,10 +1,12 @@
 package com.zoe.wan.android.http
 
 object BaseUrlConstants {
-    private const val baseUrl: String = "https://www.wanandroid.com/"
+    const val baseUrl: String = "https://www.wanandroid.com/"
 
-    fun getHost(): String {
-        return baseUrl
-    }
+    //测试域名1
+    const val url1: String = "https://www.djj.com"
+
+    //测试域名2
+    const val url2: String = "https://www.hzz.com"
 
 }

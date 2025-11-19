@@ -1,9 +1,8 @@
 package com.zoe.wan.base
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import java.lang.reflect.ParameterizedType
 
@@ -43,6 +42,15 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
             e.printStackTrace()
             throw RuntimeException("自动初始化 ViewBinding 失败，请检查泛型参数: ${e.message}")
         }
+    }
+
+    fun setAppLanguage(languageCode: String) {
+        // 更新应用语言
+        LanguageManager.setLocale(this, languageCode)
+        // 重启Activity以应用语言更改
+        recreate()
+        // 可选：显示成功消息
+        Toast.makeText(this, getString(R.string.language_changed), Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {

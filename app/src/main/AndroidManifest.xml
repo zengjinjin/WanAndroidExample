@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.zoe.wan.android.example" >
+    package="com.zoe.wan.android.example">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".DjjApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,12 +16,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WanAndroidExample"
-        tools:targetApi="31" >
+        tools:targetApi="31">
+        <activity
+            android:name=".LanguageActivity"
+            android:exported="false" >
+        </activity>
+        <activity
+            android:name=".TestActivity"
+            android:configChanges="locale|layoutDirection"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+        </activity>
         <activity
             android:name=".activity.SplashActivity"
+            android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SplashActivity"
-            android:exported="true">
+            android:theme="@style/Theme.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
