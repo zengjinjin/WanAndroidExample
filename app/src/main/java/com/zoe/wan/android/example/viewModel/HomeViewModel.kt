@@ -19,8 +19,8 @@ class HomeViewModel : LoadingVM() {
     private var pageCount: Int = 0
 
     override fun request(isRefreshing: Boolean?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            liveData.postValue(Result.Loading)
+        viewModelScope.launch() {
+            liveData.value = Result.Loading
             try {
                 val data = coroutineScope {
                     var o1: Deferred<List<HomeBannerData>>? = null
@@ -48,10 +48,10 @@ class HomeViewModel : LoadingVM() {
                         }
                     )
                 }
-                liveData.postValue(data)
+                liveData.value = data
             } catch (e: Exception) {
                 println("hzz 错误${e.message}")
-                liveData.postValue(Result.Error(e))
+                liveData.value = Result.Error(e)
                 pageCount--
             }
         }

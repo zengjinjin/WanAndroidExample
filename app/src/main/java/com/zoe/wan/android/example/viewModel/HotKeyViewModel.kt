@@ -1,79 +1,47 @@
 package com.zoe.wan.android.example.viewModel
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.zoe.wan.android.example.repository.Repository
-import com.zoe.wan.android.example.repository.data.HomeListData
+import com.zoe.wan.android.example.repository.data.User
+import com.zoe.wan.android.example.room.AppRoomDataBase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
-class HotKeyViewModel : ViewModel() {
+class HotKeyViewModel : LoadingVM() {
 
-//    private val _homeDataList = MutableStateFlow(HomeListData())
-//    val homeDataList: StateFlow<HomeListData> = _homeDataList.asStateFlow()
-//
-//    fun refresh() {
-//        viewModelScope.launch {
-//            _homeDataList.update {
-//                it.copy(
-//                    curPage = 0,
-//                    isLoading = true,
-//                    loadMore = false
-//                )
-//            }
-//            try {
-//                println("zjj refresh ${_homeDataList.value.curPage}")
-//                val data = Repository.getHomeDataList("${_homeDataList.value.curPage}")
-//                println("zjj data:" + data?.datas?.size)
-//                _homeDataList.update {
-//                    it.copy(
-//                        datas = data?.datas,
-//                        isLoading = false,
-//                        loadMore = false
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                println("zjj e:" + e.message)
-//            }
-//        }
-//    }
-//
-//    fun loadMore() {
-//        viewModelScope.launch {
-//            _homeDataList.update {
-//                var curPage = it.curPage
-//                it.copy(
-//                    curPage = ++curPage,
-//                    isLoading = true,
-//                    loadMore = true
-//                )
-//            }
-//            try {
-//                println("zjj loadMore ${_homeDataList.value.curPage}")
-//                val data = Repository.getHomeDataList("${_homeDataList.value.curPage}")
-//                println("zjj data:" + data?.datas?.size)
-//                if (data != null) {
-//                    // 加载更多：将新数据添加到现有列表中
-//                    val currentList = _homeDataList.value?.datas ?: mutableListOf()
-//                    val newList = data.datas?.let { currentList.plus(it) }
-//                    println("zjj newList:" + newList?.size)
-//                    _homeDataList.update {
-//                        it.copy(
-//                            datas = newList,
-//                            isLoading = false,
-//                            loadMore = true
-//                        )
-//                    }
-//                } else {
-//                    // 加载失败时回退 pageCount
-//                }
-//            } catch (e: Exception) {
-//                println("zjj e:" + e.message)
-//            }
-//        }
-//    }
+    var livedata: LiveData<List<User>>? = null
+
+    override fun request(isRefreshing: Boolean?) {
+
+    }
+
+    fun insertUsers() {
+        val users = mutableListOf<User>()
+        repeat(10) {
+            users.add(User((it + 1).toLong(), "user.name${it + 1}", "user.email${it + 1}", it + 1, "user.phone${it + 1}"))
+        }
+        viewModelScope.launch {
+            val insert = launch(Dispatchers.IO) {
+                val count = AppRoomDataBase.databaseInstance
+                    .userDao()
+                    .upsert(users)
+//                val count = AppRoomDataBase.databaseInstance
+//                    .userDao()
+//                    .insert(users.first())
+                println("djj count=${count.size}")
+            }
+
+            val query = launch(Dispatchers.IO) {
+                livedata = AppRoomDataBase.databaseInstance
+                    .userDao()
+                    .getAllUsersLiveData()
+            }
+
+            insert.join()
+            query.join()
+//            joinAll(insert, query)
+        }
+    }
+
 }
