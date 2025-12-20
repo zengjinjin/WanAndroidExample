@@ -11,7 +11,7 @@ import com.zoe.wan.android.example.room.dao.UserDao
 
 @Database(
     entities = [User::class],
-    version = 3,
+    version = 2,
     exportSchema = false
 )
 abstract class AppRoomDataBase : RoomDatabase() {
@@ -24,15 +24,10 @@ abstract class AppRoomDataBase : RoomDatabase() {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // 添加新列
-                database.execSQL("ALTER TABLE users ADD COLUMN phone TEXT")
+                database.execSQL("ALTER TABLE users ADD COLUMN phone_number TEXT")
             }
         }
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                // 添加新列
-                database.execSQL("ALTER TABLE users ADD COLUMN phone TEXT")
-            }
-        }
+
 
         /**
          * 创建线程安全的数据库实例，在延迟加载时会初始化，节省内存浪费分配
@@ -44,7 +39,7 @@ abstract class AppRoomDataBase : RoomDatabase() {
                 DATABASE_NAME
             ).allowMainThreadQueries() //允许在主线程操作数据库
                 .fallbackToDestructiveMigration()
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2)
                 .build()
         }
     }

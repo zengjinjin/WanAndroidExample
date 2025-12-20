@@ -22,8 +22,8 @@ interface UserDao {
     @Upsert
     suspend fun upsert(items: List<User>): List<Long>
 
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insert(items: List<User>): List<Long>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(items: List<User>): List<Long>
 
     @Query("SELECT * FROM users")
     fun getAllUsersLiveData(): LiveData<List<User>>

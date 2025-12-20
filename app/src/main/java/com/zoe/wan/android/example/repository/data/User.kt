@@ -11,5 +11,5 @@ data class User(
     @ColumnInfo(name = "email") val email: String,
     @ColumnInfo(name = "age") val age: Int,
     // 新添加的字段
-    @ColumnInfo(name = "phone") val phone: String
+    @ColumnInfo(name = "phone_number") val phoneNumber: String?
 )

@@ -12,6 +12,9 @@ class HotKeyViewModel : LoadingVM() {
 
     var livedata: LiveData<List<User>>? = null
 
+
+    var allUsers: LiveData<List<User>>? = null
+
     override fun request(isRefreshing: Boolean?) {
 
     }
@@ -19,29 +22,64 @@ class HotKeyViewModel : LoadingVM() {
     fun insertUsers() {
         val users = mutableListOf<User>()
         repeat(10) {
-            users.add(User((it + 1).toLong(), "user.name${it + 1}", "user.email${it + 1}", it + 1, "user.phone${it + 1}"))
+            users.add(
+                User(
+                    (it + 1).toLong(),
+                    "user.name${it + 1}",
+                    "user.email${it + 1}",
+                    it + 1,
+                    "phone${it + 1}"
+                )
+            )
         }
-        viewModelScope.launch {
-            val insert = launch(Dispatchers.IO) {
-                val count = AppRoomDataBase.databaseInstance
-                    .userDao()
-                    .upsert(users)
-//                val count = AppRoomDataBase.databaseInstance
-//                    .userDao()
-//                    .insert(users.first())
-                println("djj count=${count.size}")
-            }
-
-            val query = launch(Dispatchers.IO) {
-                livedata = AppRoomDataBase.databaseInstance
-                    .userDao()
-                    .getAllUsersLiveData()
-            }
-
-            insert.join()
-            query.join()
-//            joinAll(insert, query)
+        viewModelScope.launch(Dispatchers.IO) {
+            AppRoomDataBase.databaseInstance
+                .userDao()
+                .insert(users)
         }
     }
 
+    fun query() {
+        viewModelScope.launch(Dispatchers.IO) {
+            allUsers = AppRoomDataBase.databaseInstance
+                .userDao()
+                .getAllUsersLiveData()
+        }
+    }
+
+//    fun insertUsers2() {
+//        val users = mutableListOf<User>()
+//        repeat(10) {
+//            users.add(
+//                User(
+//                    (it + 1).toLong(),
+//                    "user.name${it + 1}",
+//                    "user.email${it + 1}",
+//                    it + 1,
+//                    "user.phone${it + 1}"
+//                )
+//            )
+//        }
+//        viewModelScope.launch {
+//            val insert = launch(Dispatchers.IO) {
+//                val count = AppRoomDataBase.databaseInstance
+//                    .userDao()
+//                    .upsert(users)
+////                val count = AppRoomDataBase.databaseInstance
+////                    .userDao()
+////                    .insert(users.first())
+//                println("djj count=${count.size}")
+//            }
+//
+//            val query = launch(Dispatchers.IO) {
+//                livedata = AppRoomDataBase.databaseInstance
+//                    .userDao()
+//                    .getAllUsersLiveData()
+//            }
+//
+//            insert.join()
+//            query.join()
+////            joinAll(insert, query)
+//        }
+//    }
 }
