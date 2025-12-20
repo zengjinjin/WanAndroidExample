@@ -11,7 +11,7 @@ import com.zoe.wan.android.example.room.dao.UserDao
 
 @Database(
     entities = [User::class],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 abstract class AppRoomDataBase : RoomDatabase() {
@@ -39,7 +39,7 @@ abstract class AppRoomDataBase : RoomDatabase() {
                 DATABASE_NAME
             ).allowMainThreadQueries() //允许在主线程操作数据库
                 .fallbackToDestructiveMigration()
-                .addMigrations(MIGRATION_1_2)
+//                .addMigrations(MIGRATION_1_2)
                 .build()
         }
     }
