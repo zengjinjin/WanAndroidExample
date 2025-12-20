@@ -11,7 +11,7 @@ import com.zoe.wan.android.example.room.dao.UserDao
 
 @Database(
     entities = [User::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppRoomDataBase : RoomDatabase() {
@@ -30,7 +30,7 @@ abstract class AppRoomDataBase : RoomDatabase() {
 
 
         /**
-         * 创建线程安全的数据库实例，在延迟加载时会初始化，节省内存浪费分配
+         * 创建线程安全的数据库实例，在延迟加载时会初始化，节省内存浪费分配123
          */
         val databaseInstance: AppRoomDataBase by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
             Room.databaseBuilder(
@@ -39,7 +39,7 @@ abstract class AppRoomDataBase : RoomDatabase() {
                 DATABASE_NAME
             ).allowMainThreadQueries() //允许在主线程操作数据库
                 .fallbackToDestructiveMigration()
-//                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2)
                 .build()
         }
     }
